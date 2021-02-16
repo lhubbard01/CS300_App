@@ -7,22 +7,32 @@ const logger = require("./middleware/logger");
 const ex_runtime = express();
 const PORT = process.env.PORT || 7000;
 ex_runtime.use(logger);
-ex_runtime.listen();
 
-
-
-if (mservice[i].protocol === "get"){
-  ex_runtime.get(mservice[i].loc, mservice[i].cb(req, res));
-} else if (mservice[i].protocol === "post"){
-  ex_runtime.post(mservice[i].loc, mservice[i].cb(req,res));
   
-} else if (mservice[i].protocol === "delete"){
-  ex_runtime.delete(mservice[i].loc, mservice[i].cb(req,res));
-     
 
-} else if (mservice[i].protocol === "put"){
-  ex_runtime.put(mservice[i].loc, mservice[i].cb(req,res));
-}
-else{
-  throw exception("Unknown http protocol used in express runtime routing!!!");
-}
+
+  // imported microservice api as mservice array ties protocol to callbacks
+  //GET 
+  if (mservice[i].protocol === "get"){
+    ex_runtime.get(mservice[i].loc, mservice[i].cb(req, res));
+  }
+  // POST
+  else if (mservice[i].protocol === "post"){
+    ex_runtime.post(mservice[i].loc, mservice[i].cb(req,res));
+  }
+  // PUT
+  else if (mservice[i].protocol === "put"){
+    ex_runtime.put(mservice[i].loc, mservice[i].cb(req,res));
+  }
+  // DELETE 
+  else if (mservice[i].protocol === "delete"){
+    ex_runtime.delete(mservice[i].loc, mservice[i].cb(req,res));
+  }
+  
+  // If unknown protocol passed in, protocol as string logged.
+  else{
+    throw "Unknown http protocol " + mservice[i].protocol + " passed to express routing!!!"
+  }
+
+
+ex_runtime.listen();
