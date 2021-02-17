@@ -1,4 +1,41 @@
 /*Message primatives */
+import React from "react"
+
+const Component = React.Component;
+
+function MessageEntryField extends Component {
+  
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      value: "Aa"
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+  
+  handleSubmit(event) {
+    event.preventDefault();
+  }
+  
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <textarea value={this.state.value} onChange={this,handleChange}
+        <input type="submit" value="send" />
+      </form>
+    );
+  }
+}
+
 function OtherMessage(props) {
   return (
     <div className="otherMessage">
@@ -56,12 +93,7 @@ function DMessage(props) {
         {props.chat}
       </div>
       <br>
-      <div className="MessageCompose">
-        <form>
-          <input type="text">Aa</input>
-          <input type="button">send</input>
-        </form>
-      </div>
+      <MessageEntryField />
     </div>
   );
 }
