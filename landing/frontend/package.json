@@ -1,0 +1,19 @@
+{
+  "name": "landing-front-end",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.14.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "react-scripts": "^1.1.4"
+  },
+  "proxy": "https://localhost:4000"
+}
