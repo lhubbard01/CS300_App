@@ -1,7 +1,10 @@
-const mongo = require("mongodb").MongoClient;
-const client= require("socket.io").listen(4000).sockets;
-let mongoaddr = "mongodb://127.0.0.1/mongochat"
-mongo.connect(mongoaddr, function(err, db){
+//const mongo = require("mongodb").MongoClient;
+const express = require("express");
+const app = express();
+const port = 4000;
+app.listen(port, () => console.log("app running"));
+//const client= require("socket.io").listen(4000).sockets;
+/*mongo.connect(mongoaddr, function(err, db){
   if (err) {
     throw err;
   }
@@ -66,4 +69,4 @@ mongo.connect(mongoaddr, function(err, db){
       });
     });
   });
-});
+});*/
