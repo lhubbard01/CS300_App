@@ -11,20 +11,11 @@ class ListComponent extends Component{
     this.handleClick = this.handleClick.bind(this);
   }
 
-
-
-
-
-
-
-
   handleClick(event){
-    alert(JSON.stringify(event.target.value));
     this.fetchServicesUp();
   }
   
   fetchServicesUp(){
-
     const req = {
       method: "GET",
       headers: {"Content-Type" : "application/json" },
@@ -37,7 +28,7 @@ class ListComponent extends Component{
   }
 
   componentDidMount(){
-    //this.fetchServicesUp();
+    this.fetchServicesUp();
   }
 
   render() {
