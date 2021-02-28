@@ -2,6 +2,28 @@ import argparse
 import os
 import re
 
+def writePackage(opts):
+  name = opts["name"]
+  description = (opts["description"] if "description" in opts.keys() else "")
+  if not os.path.isfile("package.json"):
+    with open("package.json" , "w") as f:
+      f.write("""
+{
+  "name": """ + name + """,
+  "version": "0.0.1",
+  "description": """ + description + """
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
+""")
 
 def parseApiFile(api_file: str) -> dict:
   front  = is_front  = False
@@ -87,42 +109,68 @@ def genServer(opts):
 
 
   with open(prefix + "index.js","w") as f:
-    f.write("import express from \"express\";\n\n")
+    f.write("""
+const express = require("express");
+const https = require("http");
+const Agent = https.Agent;
+
+const app = express();
+
+//networking definitions and startup
+const orchestratorPort = 5020;
+""")
     f.write("//Declared routes and Routers\n")
     for endpoint in api["endpoints"].keys():
-      
       f.write("import " + endpoint + "Router from \"./routes/" + endpoint + "Router\";\n")
 
       router_imports_to_write.append("app.use(" + endpoint + "Router);\n")
 
-    f.write("const app = express();\n\n")
     [  f.write( route ) for route in router_imports_to_write  ]
 
    
     f.write("\n\n//networking definitions and startup\n")
-    f.write("const orchestratorPort = 5020;\n"\
-      + "const port = process.env.PORT || " + defdPort + ";\n")
+    f.write("const port = process.env.PORT || " + defdPort + ";\n")
     
 
+
     if not opts["quiet_spinup"]:
-      announceJSON = "{\n"\
-        + "  method: 'POST',\n"\
+      announceJSON_section = """
+const data = JSON.stringify( {
+  'name': '""" + opts["name"] + """',
+  'port': port
+});
 
+const options = {
+  hostname: "localhost",
+  port: 5020,
+  path: "/api/register",
+  method: "POST",
+  headers: 
+    { 
+      'Content-Type' : 'application/json',
+      'Content-Length': data.length
+    },
+    agent: new Agent({ rejectUnauthorized: false })
+};
 
+ 
+console.log("initiating request send off");
 
-        + "  headers: \n"\
-        + "  {\n"\
-        + "      'ContentType' : 'application/json'\n"\
-        + "  },\n"\
-        + "  body: {\n"\
-        + "    'name': '" + opts["name"] + "',\n"\
-        + "    'port': port,\n"\
-        + "  }\n"\
-        + "};\n"
+const req = https.request(options, res => {
+  console.log(`status code : ${res.statusCode}`)
+  res.on("data", d => {
+    process.stdout.write(d)
+    })
+})
 
-      f.write("const announceJson = " + announceJSON)
-      f.write("\nconst announceOutcome = await fetch(\"" + opts["url"] + ":5020\", announceJson);\n")
-      f.write("console.log(announceOutcome);")
+req.on("error", error => {
+    console.error(error)
+  })
+
+console.log("request created");
+req.write(data);"""
+
+      f.write(announceJSON_section)
     f.write("\n\napp.listen(port);")
     f.write("\nconsole.log(\"" + opts["name"] + " listening on port " + str(opts["port"]) + "\");")
 
@@ -151,11 +199,13 @@ def main():
   parser.add_argument("--prefix", type = str, help = "file prefixs for path, default is \"./\"", default = "./")
   parser.add_argument("-q", "--quiet_spinup", action = "store_true", help = "announces to orchestator server the deployment of new service")
   parser.add_argument("--url", type = str, help="settable url, default is localhost", default = "localhost")
+  parser.add_argument("--generate_package", action = "store_true", help="generae package.json")
   opts = vars(parser.parse_args())
   if opts["prefix"]:
     opts["api_file"] = opts["prefix"] + opts["api_file"]
   opts["API"] = parseApiFile(opts["api_file"])
-
+  if opts["generate_package"]:
+    writePackage(opts)
   genProjectSkeleton(opts)
   genAPI(opts)
   genServer(opts)
@@ -167,3 +217,4 @@ def main():
 
 if __name__ == "__main__":
   main()
+
