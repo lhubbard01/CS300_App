@@ -2,6 +2,7 @@ const React = require("react");
 const Component = React.Component;
 
 class APIButton extends Component{
+
   constructor(props){
     super(props);
     this.state = {}
@@ -24,7 +25,7 @@ class App extends Component{
 
   render(){
     return (
-      <div className="LoginFrontEndApp">
+      <div className=LoginFrontEndApp" />
       </div>
     );
   };
