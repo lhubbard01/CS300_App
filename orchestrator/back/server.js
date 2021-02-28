@@ -24,12 +24,40 @@ class Service extends AbstractService
 
 };
 
+class Dict{
+
+  constructor(){
+    this.mapping = {
+    };
+    this.has = this.has.bind(this);
+    this.get = this.get.bind(this);
+    this.set = this.set.bind(this);
+  };
+  
+
+  has ( key ) {
+    if (!this.mapping[key]) return false;
+    else return true;
+  }
+
+  get ( key ) {
+    return this.mapping[key];
+  }
+
+  set ( key, value ) { 
+    console.log(key);
+    console.log(value);
+    this.mapping[key] = value;
+    console.log(this.mapping);
+    console.log(this.mapping[key]);
+  }
+}
 
 class ServerMain extends AbstractService{
   constructor(name, port){
     super(name, port);
     //this.lookup = {}
-    this.lookup = new Map();
+    this.lookup = new Dict();
     this.availablePorts = {}
     this.addService = this.addService.bind(this);
     this.getService = this.getService.bind(this);
@@ -41,14 +69,18 @@ class ServerMain extends AbstractService{
       //this.lookup[serviceName] = {"title" : serviceName, "port" : servicePort};
       console.log("adding service");
       this.lookup.set(serviceName, servicePort);
+      console.log(serviceName);
+      console.log(servicePort);
       return true;
     }
+    let cond = JSON.stringify(Object.fromEntries(this.lookup))
+    console.log(cond);
     console.log("service wasnt found ");
     return false;
   }
   
   getService(serviceName){
-    return this.lookup[serviceName];
+    return this.lookup.get(serviceName);
   }
 };
 
@@ -58,11 +90,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/api/register", (req, res) => {
-  console.log(req.body);
 
   // console.log(req);
-  const { caller, callerListenPort } = req.body;
-  
+  const {name, port} = req.body;
+  const caller = name;
+  const callerListenPort = port;
+  console.log(caller , callerListenPort );
+  console.log(req.body);
   let outcome = server.addService(caller, callerListenPort);
   
   console.log(JSON.stringify(outcome));
@@ -103,7 +137,7 @@ app.get("/api/search", (req, res) => {
 
 
 app.get("/api/services", (req, res) => {
-  let services = Object.fromEntries( server.lookup );
+  let services = server.lookup;
   console.log(JSON.stringify(services));
   return res.status(200).json(Array(JSON.stringify(services)));
 } );
