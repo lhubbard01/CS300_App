@@ -9,16 +9,18 @@
     "express": "^4.17.1",
     "mongoose": "^5.11.16",
     "nodemon": "^2.0.7",
-    "react-redux": "^7.2.2",
     "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.3",
     "socket.io": "^3.1.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-    "launch": "concurrently \"npm run start \" \"npm run start --prefix ../front\""
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "launch": "concurrently \"npm run start --prefix ./orchestrator/ \" \"npm run start --prefix ./ping/\""
   },
   "repository": {
     "type": "git",
