@@ -77,24 +77,23 @@ def parseApiFile(api_file: str) -> dict:
 
 def genProjectSkeleton(opts):
   api = opts["API"]
+
   prefix = ""
   if opts["prefix"]:
     prefix = opts["prefix"]
+
   if not os.path.isdir(prefix + "back"):
     os.mkdir(prefix + "back")
+    if opts["generate_package"]:
+      writePackage(prefix + "back")
+
   if not os.path.isdir(prefix + "front"):
     os.mkdir(prefix + "front")
+    if opts["generate_package"]:
+      writePackage(prefix + "back")
+
   if not os.path.isdir(prefix + "back/routes"):
     os.mkdir(prefix + "back/routes")
-
-
-  
-
-
-
-
-
-
 
 
 
@@ -204,8 +203,6 @@ def main():
   if opts["prefix"]:
     opts["api_file"] = opts["prefix"] + opts["api_file"]
   opts["API"] = parseApiFile(opts["api_file"])
-  if opts["generate_package"]:
-    writePackage(opts)
   genProjectSkeleton(opts)
   genAPI(opts)
   genServer(opts)
