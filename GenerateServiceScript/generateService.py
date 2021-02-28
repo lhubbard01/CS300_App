@@ -190,6 +190,91 @@ def genAPI(opts):
         + "export default = " + routerOut + ";\n")
 
 
+def verb(method_verb, 
+  payload = ""
+  if method_verb not "get":
+    payload += """
+const data = JSON.stringify({
+    BBBB: YYYY
+    CCCC: ZZZZ,
+});
+"""
+  payload += """
+    const requestOptions = {
+      method: """ + method_verb + """ 
+      headers: {"Content-Type" : "application/json" },
+"""
+  if method_verb not "get":
+    payload+="body: data\n};\n"
+  else:
+    payload += "\n};\n"
+  payload += """
+  fetch(""" + target + """, req)
+      .then(res => res.json())
+      .then(XXXXX => this.setState({XXXXX},
+        () => console.log("services have been fetched, here they are " + JSON.stringify())));
+  }"""
+  return payload
+    
+def genFront(opts):
+  template = """
+function APIButton extends Component{
+  constructor(props){
+    super(props);
+    this.state = {}
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  
+  handleClick(event){
+    event.target.value;
+  }
+
+
+};
+
+function App extends Component{
+  constructor(props){
+    super(props);
+    this.state = {}
+  }
+
+  render(){
+    return (
+      <div className=""" + opts["name"] + """FrontEndApp" />
+      </div>
+    );
+  };
+}
+export default = App;
+"""
+  if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "public" ):
+    os.mkdir( opts["prefix"] + "front" + os.path.sep + "public")
+  if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "src" ):
+
+    os.mkdir( opts["prefix"] + "front" + os.path.sep + "src")
+
+  if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "components")
+    os.mkdir(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "components")
+
+  if not os.path.isfile(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "App.js" ):
+    with open(opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "App.js"):
+      f.write(template)
+
+  if not os.path.isfile(  opts["prefix"] + "front" + os.path.sep + "public" + os.path.sep + "index.html"):
+    with open(opts["prefix"] + "front" + os.path.sep + "public" + os.path.sep + "index.html", "w") as f:
+    f.write("""
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <title>App</title>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>""")
+    
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("name", type = str, help = "microservice name")
