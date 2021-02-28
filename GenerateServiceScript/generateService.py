@@ -107,7 +107,7 @@ def genServer(opts):
 
 
 
-  with open(prefix + "index.js","w") as f:
+  with open(prefix + "back" + os.path.sep + "index.js","w") as f:
     f.write("""
 const express = require("express");
 const https = require("http");
@@ -190,9 +190,9 @@ def genAPI(opts):
         + "export default = " + routerOut + ";\n")
 
 
-def verb(method_verb, 
+def verb(method_verb, target):
   payload = ""
-  if method_verb not "get":
+  if method_verb not in "get":
     payload += """
 const data = JSON.stringify({
     BBBB: YYYY
@@ -204,7 +204,8 @@ const data = JSON.stringify({
       method: """ + method_verb + """ 
       headers: {"Content-Type" : "application/json" },
 """
-  if method_verb not "get":
+
+  if method_verb not in "get":
     payload+="body: data\n};\n"
   else:
     payload += "\n};\n"
@@ -248,22 +249,30 @@ function App extends Component{
 }
 export default = App;
 """
+
+
+
   if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "public" ):
     os.mkdir( opts["prefix"] + "front" + os.path.sep + "public")
+ 
+
   if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "src" ):
-
     os.mkdir( opts["prefix"] + "front" + os.path.sep + "src")
+    print("made src")
 
-  if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "components")
+  if not os.path.isdir(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "components"):
     os.mkdir(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "components")
+    print("made src/components")
 
   if not os.path.isfile(  opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "App.js" ):
-    with open(opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "App.js"):
+    with open(opts["prefix"] + "front" + os.path.sep + "src" + os.path.sep + "App.js", "w") as f:
       f.write(template)
+    print("wrote src/App.js")
 
   if not os.path.isfile(  opts["prefix"] + "front" + os.path.sep + "public" + os.path.sep + "index.html"):
     with open(opts["prefix"] + "front" + os.path.sep + "public" + os.path.sep + "index.html", "w") as f:
-    f.write("""
+
+      f.write("""
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -274,7 +283,8 @@ export default = App;
     <div id="root"></div>
   </body>
 </html>""")
-    
+    print("wrote public/index.html")
+
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("name", type = str, help = "microservice name")
@@ -290,6 +300,7 @@ def main():
   opts["API"] = parseApiFile(opts["api_file"])
   genProjectSkeleton(opts)
   genAPI(opts)
+  genFront(opts)
   genServer(opts)
 
   print("Project " + opts["name"] + " generated!!!")
