@@ -1,0 +1,2 @@
+
+#konsole -e  $SHELL -c  "npm run start --prefix /u/lhubbard/cs300/app2/orchestrator/back" & konsole -e $SHELL -c "npm run start --prefix /u/lhubbard/cs300/app2/orchestrator/front" & 
