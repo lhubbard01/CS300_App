@@ -107,17 +107,24 @@ def genServer(opts):
     if not opts["quiet_spinup"]:
       announceJSON = "{\n"\
         + "  method: 'POST',\n"\
+
+
+
         + "  headers: \n"\
-        + "    { 'ContentType' : 'application/json},\n"\
-        + "  'body': {\n"\
+        + "  {\n"\
+        + "      'ContentType' : 'application/json'\n"\
+        + "  },\n"\
+        + "  body: {\n"\
         + "    'name': '" + opts["name"] + "',\n"\
         + "    'port': port,\n"\
+        + "  }\n"\
         + "};\n"
 
       f.write("const announceJson = " + announceJSON)
       f.write("\nconst announceOutcome = await fetch(\"" + opts["url"] + ":5020\", announceJson);\n")
       f.write("console.log(announceOutcome);")
     f.write("\n\napp.listen(port);")
+    f.write("\nconsole.log(\"" + opts["name"] + " listening on port " + str(opts["port"]) + "\");")
 
     
 def genAPI(opts):
