@@ -72,7 +72,9 @@ def parseApiFile(api_file: str) -> dict:
         route_name = ""
 
   return API
-          
+
+
+
     
 
 def genProjectSkeleton(opts):
@@ -97,6 +99,30 @@ def genProjectSkeleton(opts):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def genServer(opts):
   api = opts["API"]
   prefix = opts["prefix"]
@@ -105,15 +131,22 @@ def genServer(opts):
   router_imports_to_write = []
 
 
-
-
   with open(prefix + "back" + os.path.sep + "index.js","w") as f:
     f.write("""
+const fs = require('fs');
 const express = require("express");
+const process = require('process');
+const path = require('path');
 const https = require("http");
 const Agent = https.Agent;
 
 const app = express();
+
+
+
+app.use(morgan("common", {
+  stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+}));
 
 //networking definitions and startup
 const orchestratorPort = 5020;
@@ -293,7 +326,7 @@ def main():
   parser.add_argument("--prefix", type = str, help = "file prefixs for path, default is \"./\"", default = "./")
   parser.add_argument("-q", "--quiet_spinup", action = "store_true", help = "announces to orchestator server the deployment of new service")
   parser.add_argument("--url", type = str, help="settable url, default is localhost", default = "localhost")
-  parser.add_argument("--generate_package", action = "store_true", help="generae package.json")
+  parser.add_argument("--generate_package", action = "store_true", help="generate package.json")
   opts = vars(parser.parse_args())
   if opts["prefix"]:
     opts["api_file"] = opts["prefix"] + opts["api_file"]
@@ -304,7 +337,6 @@ def main():
   genServer(opts)
 
   print("Project " + opts["name"] + " generated!!!")
-
 
 
 
