@@ -219,7 +219,7 @@ const data = JSON.stringify({
     
 def genFront(opts):
   template = """
-function APIButton extends Component{
+class APIButton extends Component{
   constructor(props){
     super(props);
     this.state = {}
@@ -234,7 +234,7 @@ function APIButton extends Component{
 
 };
 
-function App extends Component{
+class App extends Component{
   constructor(props){
     super(props);
     this.state = {}
@@ -242,12 +242,12 @@ function App extends Component{
 
   render(){
     return (
-      <div className=""" + opts["name"] + """FrontEndApp" />
+      <div className=""" + opts["name"] + """FrontEndApp" >
       </div>
     );
   };
 }
-export default = App;
+export default App;
 """
 
 

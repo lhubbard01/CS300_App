@@ -1,7 +1,12 @@
 const express = require("express");
 const process = require("process");
-
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
 const app = express();
+app.use(morgan("common", {
+  stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+}));
 
 const PORT = 5020;
 
@@ -73,7 +78,7 @@ class ServerMain extends AbstractService{
       console.log(servicePort);
       return true;
     }
-    let cond = JSON.stringify(Object.fromEntries(this.lookup))
+    let cond = JSON.stringify(this.lookup);
     console.log(cond);
     console.log("service wasnt found ");
     return false;
@@ -118,18 +123,21 @@ app.post("/api/register", (req, res) => {
   }
 });
 
-app.get("/api/search", (req, res) => {
+app.post("/api/search", (req, res) => {
   
-  const service = server.getService(requestedService);
-  console.log("api search hit with get");
+  
+  const {name} = req.body;
+  const service = server.getService(name ); //requestedService);
+
   console.log(req);
   if (service){
     return res.status(200).json({
-      "port" : service.listening
+      "service_name" : name,
+      "port" : service
     });
   }
   else{
-    return res.satus(400).json({
+    return res.status(400).json({
       "error" : "requested service" + requestedService + " not found on registry."
     });
   }
