@@ -1,11 +1,14 @@
 import argparse
 import os
 import re
-
+"""def generateRequestedClientApi(list):"""
+"""def writeInitFrontend()"""
 def writePackage(opts):
   name = opts["name"]
   description = (opts["description"] if "description" in opts.keys() else "")
   if not os.path.isfile("package.json"):
+    if os.path.realpath.lower().contains("front"):
+      """subprocess.run("cd ..; npx create-react-app front" + opts["name"], shell = True)"""
     with open("package.json" , "w") as f:
       f.write("""
 {
