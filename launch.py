@@ -34,24 +34,18 @@ hardstatus string '%{= kG}[%{G}%H%? %1`%?%{g}][%= %{= kw}%-w%{+b yk} %n*%t%?(%u)
   for i, title in enumerate(files.keys()):
     j = i
     f.write(f"""
-screen -S {title}  {i}  bash
+screen -t {title}  {i}  bash
 """)
   f.write(f"""
-screen -S MAIN {j + 1} zsh
-layout new one
+screen -t MAIN {j + 1} zsh
 """)
-  for i in range(len(files.keys())):
-    if i % 2 == 0:
-      flag = "-v"
-    else: flag = ""
-
-    f.write(f"""select {i}
-split """ + flag + "\n")
-
-    if i % 2 == 0:
-      f.write("focus right\n")
-    else:
-      f.write("focus down\n")
+  if len(files.keys()) > 16:
+    raise Exception("build multiple windows as TODO")
+  if len(files.keys()) > 6: f.write("select 0\nsplit\nfocus up\nsplit -v\nfocus right\n")
+  else: f.write("select 0\nsplit -v\nfocus right\n")
+  for i in range(1, len(files.keys())):
+    f.write(f"""select {i}\nsplit -v\nfocus next\n""")
+    if i == 6: f.write("select 0;\nfocus down\n");
 
   f.write("""
 bind -c rsz \t    eval "focus"       "command -c rsz" # Tab
@@ -61,8 +55,7 @@ bind -c rsz -k ku eval "focus up"    "command -c rsz" # Up
 bind -c rsz -k kd eval "focus down"  "command -c rsz" # Down
 """)
   for i, loc in enumerate(files.keys()):
-    f.write(f"select {i}\nstuff \"cd {files[loc]['abs']}^M\"\nstuff \"npm run start^M\"\n")
-  f.write("select 2")
+    f.write(f"select {i}\nstuff \"cd {files[loc]['abs']}^M\"\nstuff \"npm run start^M\"\nfocus next\n")
   f.close()
 
 
@@ -94,14 +87,16 @@ def main(opts):
         out += walking(f)
     with open("servers","w") as f:
       for path in out:
-        f.write( path.split(os.path.sep)[-1] + "," + path + "\n")
+        serv, fb = path.split(os.path.sep)[-2:] 
+        f.write( serv + os.path.sep + fb + "," + path + "\n")
 
   files = {}
   with open("servers","r") as f:
     for line in f.readlines():
-      if len(line) == 0:
+      if len(line) == 1:
         continue
       fields = line.strip().split(",")
+      print(fields)
       files[fields[0]] = {"abs": fields[1]}
  
   write(files)
@@ -128,6 +123,5 @@ if __name__ == "__main__":
   parser.add_argument("-f","--servers", type=str, help = "server declaration file for inclusion in screen script")
   parser.add_argument("-p","--pylaunch", action="store_true", help = "launch from a subprocess initiated from python")
   opts = vars(parser.parse_args())
-  if not opts["servers"]:
-    opts["find_servers"] = True
+  opts["find_servers"] = (True if not opts["servers"] else False)
   main(opts)
