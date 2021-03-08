@@ -32,8 +32,7 @@ class Service extends AbstractService
 class Dict{
 
   constructor(){
-    this.mapping = {
-    };
+    this.mapping = {};
     this.has = this.has.bind(this);
     this.get = this.get.bind(this);
     this.set = this.set.bind(this);
@@ -50,18 +49,13 @@ class Dict{
   }
 
   set ( key, value ) { 
-    console.log(key);
-    console.log(value);
     this.mapping[key] = value;
-    console.log(this.mapping);
-    console.log(this.mapping[key]);
   }
 }
 
 class ServerMain extends AbstractService{
   constructor(name, port){
     super(name, port);
-    //this.lookup = {}
     this.lookup = new Dict();
     this.availablePorts = {}
     this.addService = this.addService.bind(this);
@@ -69,13 +63,13 @@ class ServerMain extends AbstractService{
   };
   
 
-  addService(serviceName, servicePort){
+  addService(serviceName, serviceManifest){
     if (!this.lookup.has(serviceName)){ //[serviceName]){
       //this.lookup[serviceName] = {"title" : serviceName, "port" : servicePort};
       console.log("adding service");
-      this.lookup.set(serviceName, servicePort);
+      this.lookup.set(serviceName, serviceManifest);
       console.log(serviceName);
-      console.log(servicePort);
+      console.log(serviceManifest);
       return true;
     }
     let cond = JSON.stringify(this.lookup);
@@ -97,18 +91,18 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/api/register", (req, res) => {
 
   // console.log(req);
-  const {name, port} = req.body;
+  const {name, manifest} = req.body;
   const caller = name;
-  const callerListenPort = port;
-  console.log(caller , callerListenPort );
-  console.log(req.body);
-  let outcome = server.addService(caller, callerListenPort);
+  console.log(caller , manifest );
+  let outcome = server.addService(caller, manifest);
   
   console.log(JSON.stringify(outcome));
   if (outcome){
+    console.log(
+        "service " + caller + ":" + manifest["port"] + " added to orchestrator\nmanifest: " + JSON.stringify(manifest));
     return res.status(200).json(
       {
-        "message": "service " + caller + ":" + callerListenPort + " added to orchestrator"
+        "message": "service " + caller + ":" + manifest["port"] + " added to orchestrator\nmanifest: " + JSON.stringify(manifest)
       });
   }
   

@@ -30,7 +30,19 @@ console.log("ports orchestrator and listen declared");
 
 const data = JSON.stringify({
     name: 'Ping',
-    port: listen_port,
+    manifest:
+      {actions:
+      {getHealth:{
+        args:["serviceName"],
+        port: listen_port,
+        host: "localhost",
+        path: "/api/getHealth",
+        method: "POST"
+      }
+    },
+    name: "Ping",
+    port: listen_port
+  }
 });
 
 const options = {
