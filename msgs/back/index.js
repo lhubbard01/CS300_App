@@ -3,6 +3,9 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, {cors: {origin:"http://localhost:5071", credentials : true}});
 const helmet = require("helmet");
 
+const conn = require("./conn.js");
+const MessageModel = require("./message.js");
+
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/page.html");
 });
@@ -18,18 +21,43 @@ app.get("/", (req, res) => {
 
 app.use(helmet());
 app.get("/api/load_msgs", (req, res) => {
-  res.body = ["msg1","msg2"] 
-}
+    
+    MessageModel.find( {}, (err, result) => {
+      if (err){
+        res.send(err);
+      }
+      else{
+        res.send(result);
+      }
+    });
+  }
 );
 
 
+class sessionPersister{
+  constructor(){
+    this.msgcount = 0;
+    this.inc = this.inc.bind(this);
+  };
+  inc(){
+    this.msgcount += 1;
+    return this.msgcount;
+  }
+};
+var session = new sessionPersister();
 
 io.on("connection", (socket) => {
+  console.log("new session");
   socket.on("chat message", (msg) => { 
+    let msgcount = session.inc();
     console.log(msg);
-    message = {content: msg, time: new Date()};
+    let message = {content: msg.message, time: new Date(), username: "alan", group: 1234, position: msgcount};
     console.log("As message object"+ JSON.stringify(message));
-    io.emit("chat message", message);
+    socket.broadcast.emit("chat message", message);
+    let msgDoc = new MessageModel(message);
+    console.log("message model docuent created");
+    msgDoc.save();
+    console.log("successful push to remote instance")
   });
   let messagebool = false;
   let buffer = 0;
@@ -73,7 +101,6 @@ io.on("connection", (socket) => {
 });
 http.listen(5070, () => {
               console.log("listening at 5070");});
-
 
 
 
