@@ -2,7 +2,6 @@ const app = require("express")();
 const http = require("http").Server(app);
 const io = require("socket.io")(http, {cors: {origin:"http://localhost:5071", credentials : true}});
 const helmet = require("helmet");
-
 const conn = require("./conn.js");
 const MessageModel = require("./message.js");
 
@@ -20,14 +19,31 @@ app.get("/", (req, res) => {
 
 
 app.use(helmet());
-app.get("/api/load_msgs", (req, res) => {
-    
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});;
+app.get("/api/load_msgs",  function(req, res)  {
+    console.log("get endpoint has been used, getting messages");
+    console.log(typeof MessageModel);
     MessageModel.find( {}, (err, result) => {
+      console.log("err: " + err);
+      console.log("result: " + result);
       if (err){
         res.send(err);
       }
       else{
-        res.send(result);
+        res.header('Access-Control-Allow-Origin', '*');
+        console.log(typeof result);
+        //res.body = result.toArray();
+        res.status(200);
+        console.log(res);
+        res.json(req.get("headers"));
+        res.set("Access-Control-Allow-Origin","*");
+        console.log("returned the results");
       }
     });
   }

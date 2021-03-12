@@ -1,0 +1,4 @@
+
+
+MessageS = new Schema({username: string, time: Date,position: number, group: number, content: content});
+Message = new Model("Message", MessageS);
