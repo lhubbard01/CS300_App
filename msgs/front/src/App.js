@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import socketClient from "socket.io-client"
 import {React, Component} from "react";
+
 class MessageDisplayBox extends Component{
   constructor(props) {
     super(props);
@@ -13,7 +14,6 @@ class MessageDisplayBox extends Component{
     //this.receiveSocketEmission = this.receiveSocketEmission.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleKeyPressLookup = this.handleKeyPressLookup.bind(this);
-    this.loadMessages = this.loadMessages.bind(this);
     this.submitMessageContent = this.submitMessageContent.bind(this);
     
     this.socket = socketClient("http://localhost:5070", {"transport":["websocket"]});
@@ -46,29 +46,10 @@ class MessageDisplayBox extends Component{
     
   }
   componentDidMount(){
-    this.loadMessages();
     this.socket.on("chat message", msg => {
-      alert(msg);
-      alert(JSON.stringify(this.state.messages));
       this.setState({messages: [ ...this.state.messages , msg]}) ;
-      alert(JSON.stringify(this.state.messages));
     });
   }
-
-  loadMessages = async () => {
-    const req = {
-      method: "GET",headers: {"Content-Type":"application/json"},
-
-    }
-     
-    req.mode = "no-cors";
-    fetch("http://localhost:5070/api/load_msgs", req).then( async res => {
-      let outcome = await res.json();
-      this.setState({messages: outcome.messages});
-    });
-    };
-
-
   render(){
 
   
@@ -88,10 +69,51 @@ class MessageDisplayBox extends Component{
   }
 };
 
+
+class MessageBox extends Component{
+  constructor(props){
+    super(props);
+    this.state = { msgBuffer : [] };
+    this.loadMessages = this.loadMessages.bind(this);
+  }
+
+
+
+
+  loadMessages = async () => {
+    const req = {
+      method: "GET",headers: {"Content-Type":"application/json"},
+
+    }
+     
+    req.mode = "no-cors";
+    console.log("getting messages in react");
+    const res = await fetch("http://localhost:5070/api/load_msgs", req)
+    const outcome =  res;
+    this.setState({msgBuffer: [ ...this.state.msgBuffer , outcome]});
+    console.log("messages successfully retrieved");
+  };
+  
+  render(){
+    return (
+    <div className="MessageBox" >
+      <MessageDisplayBox messages={this.msgBuffer} />
+      <input type="button" onClick={this.loadMessages} value="load messages saved on mongo" />
+    </div>
+    );
+  }
+}
+
+
+
+
+
+
 function App() {
   return (
     <div className="App">
-        <MessageDisplayBox />
+        
+        <MessageBox />
     </div>
   );
 }
