@@ -1,15 +1,21 @@
 const {React, Component} = require("react");
 const  ReactDOM =  require("react-dom");
-console.log(Component);
 
 class Header extends Component{
   constructor(props){
     super(props);
-    this.state = {title: props.title}
+    this.state = {
+      title : props.title
+      }
   };
+
+
+
+
+
   render(){
     return (
-      <h1 style={{background: "red"}}> {this.state.title}</h1>
+      <h1 style = {{background: "red"}}> {this.state.title}</h1>
 
 
     );
@@ -21,12 +27,15 @@ class SignupBox extends Component{
     super(props);
 
     this.state = {
-      unvalue: "", pwvalue: "", emvalue :""
+      unvalue : "", 
+      emvalue : "",
+      pwvalue : ""
     };
-    this.signupRoute = this.signupRoute.bind(this); 
-    this.handleSignup = this.handleSignup.bind(this);
 
-    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.signup = this.signup.bind(this); 
+    
+    this.handleSignup         = this.handleSignup.bind(this);
+    this.handleChangeEmail    = this.handleChangeEmail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
     
@@ -45,27 +54,32 @@ class SignupBox extends Component{
     this.setState({emvalue: event.target.value } );
   }
 
-  async signupRoute(outbound){
+  async signup(outbound){
     return fetch("/api/signup", outbound).then(data => data.json());
   }
   
 
   async handleSignup(event){
     //event.PreventDefault();
-    const data = JSON.stringify({ "username" : this.state.unvalue,
-              "email": this.state.emvalue,
-              "password": this.state.pwvalue});
+    const data = {
+      username : this.state.unvalue,
+      email    : this.state.emvalue,
+      password : this.state.pwvalue
+    };
 
     const requestOptions = {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Content-Length": data.length},
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": data.length
+      },
       body: data
     };
-    alert(JSON.stringify(requestOptions));
-    const res = await this.signupRoute(JSON.stringify(requestOptions));
 
-    alert(res);
+
+    this.signup(requestOptions);
   }
+
 
   render(){
     return ( <div className="Signup">
@@ -74,21 +88,38 @@ class SignupBox extends Component{
       <h2>Sign Up</h2>
         <form>
 
-          <value>Username</value><br/>
-          <input type="text" 
-            value={this.state.unvalue}
-            onChange={this.handleChangeUsername} /><br/>
+          <value>Username</value>
+          <br/>
 
-          <value>Email</value><br/>
-          <input type="text"
-            value={this.state.emvalue} 
-            onChange={this.handleChangeEmail} /><br/>
+          <input type     = "text" 
+                 value    = {this.state.unvalue}
+                 onChange = {this.handleChangeUsername} 
+          />
+          <br/>
 
-          <value>Password</value><br/>
-          <input type = "password" 
-            value={this.state.pwvalue}
-            onChange={this.handleChangePassword} /><br/>
-          <input type="submit" onClick={this.handleSignup}/><br/>
+          <value>Email</value>
+          <br/>
+
+          <input type = "text"
+            value     = {this.state.emvalue} 
+            onChange  = {this.handleChangeEmail} 
+          />
+          <br/>
+
+          <value>Password</value>
+          <br/>
+
+          <input type     = "password" 
+                 value    = {this.state.pwvalue}
+                 onChange = {this.handleChangePassword} 
+          />
+          <br/>
+
+          <input type    = "submit" 
+                 onClick = {this.handleSignup}
+          />
+          <br/>
+
         </form>
       </div>
     </div>
@@ -106,8 +137,8 @@ class App extends Component{
 
 
     return (
-      <div className="LoginPage"  >
-        <Header title="Login" />
+      <div className  ="LoginPage"  >
+        <Header title ="Login" />
         <SignupBox />
       </div>
       );
