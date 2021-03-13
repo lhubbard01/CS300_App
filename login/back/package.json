@@ -1,0 +1,40 @@
+{
+  "name": "Login",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev-start": "concurrently \"PORT=5041 npm run start --prefix ../front/\" \"nodemon index.js\" "
+  },
+  "orch": 5020,
+  "listen": 5040,
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^6.0.0",
+    "nodemon": "^2.0.7"
+  },
+  "manifest": {
+    "actions": {
+      "signup": {
+        "args": [
+          "username",
+          "email",
+          "password"
+        ],
+        "host": "localhost",
+        "path": "/api/signup",
+        "method": "POST",
+        "port": 5040
+      }
+    },
+    "name": "Login",
+    "port": 5040
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5"
+  }
+}
