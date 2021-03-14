@@ -22,11 +22,13 @@ class AbstractService{
 
 class Service extends AbstractService
 {
-  constructor(name, port){
+  constructor(name, port, manifest){
     super(name, port);
+    this.manifest = manifest;
+    this.actions = manifest["actions"]
   }
 
-
+  
 };
 
 class Dict{
@@ -94,7 +96,7 @@ app.post("/api/register", (req, res) => {
   const {name, manifest} = req.body;
   const caller = name;
   console.log(caller , manifest );
-  let outcome = server.addService(caller, manifest);
+  let outcome = server.addService(caller, new Service(caller, manifest["port"], manifest));
   
   console.log(JSON.stringify(outcome));
   if (outcome){
@@ -139,9 +141,10 @@ app.post("/api/search", (req, res) => {
 
 
 app.get("/api/services", (req, res) => {
-  let services = server.lookup;
+  let services = Object.values(server.lookup.mapping)
+  console.log("Non string" , services)
   console.log(JSON.stringify(services));
-  return res.status(200).json(Array(JSON.stringify(services)));
+  return res.status(200).json((JSON.stringify(services)));
 } );
 
 app.listen(PORT);
