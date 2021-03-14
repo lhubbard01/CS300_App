@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev-start": "concurrently \"PORT=5041 npm run start --prefix ../front/\" \"nodemon index.js\" "
+    "dev-start": "concurrently \"PORT=5041 npm run start --prefix ../front/\" \"nodemon index.js\" ",
+    "nm": "nodemon index.js"
   },
   "orch": 5020,
   "listen": 5040,
@@ -35,6 +36,8 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "helmet": "^4.4.1",
+    "http-proxy-middleware": "^1.0.6"
   }
 }

@@ -103,8 +103,7 @@ app.post("/api/signup", bodyParser.json(),(req, res) => {
 
 
   
-
- announceSpinup();
+setTimeout(announceSpinup, 5000);
 
 
 app.listen(port);
