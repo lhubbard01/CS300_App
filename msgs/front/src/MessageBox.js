@@ -300,7 +300,7 @@ class MessageBox extends Component{
 
   render(){
     return (
-    <div className="MessageBox" >
+    <div className={this.props.divname} >
       <MessageDisplayBox msgBuffer = {this.state.msgBuffer} />
 
       <TextEntry />
@@ -318,4 +318,4 @@ class MessageBox extends Component{
 
 
 
-
+export default MessageBox;
