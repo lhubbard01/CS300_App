@@ -38,6 +38,5 @@ ds.once("open",
 
   console.log("successful connection!!");
   
-  userDoc.save()
   });
 module.exports = ds;

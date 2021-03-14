@@ -12,16 +12,6 @@ import {React, Component} from "react";
 
 
 
-
-
-
-
-
-
-
-
-
-
 class TextEntry extends Component {
   //This comonent is used to fetch the text. It houses 
   //a socket as state, which informs server of typing activity
@@ -46,8 +36,6 @@ class TextEntry extends Component {
     
     this.socket = socketClient("http://localhost:5070", {"transport":["websocket"]});
   }
-
-
 
 
 
@@ -81,8 +69,6 @@ class TextEntry extends Component {
   };
 
 
-
-  
   handleKeyPressLookup(e){
     //supposed to send delete signal back to socket server, handles user typing status
     let x;
@@ -222,10 +208,26 @@ class ChatRow extends Component{
   }
   render() { 
     return (
+
       <div className="ChatRow">
-        <label>{this.props.obj.username}</label><p id="time">{this.props.obj.time}</p>
-        <br/>
-        <p>{this.props.obj.content}</p><br/>
+
+  
+        <div id="userCol" >
+      <div id="timeInfo">
+          <p id="time">{this.props.obj.time}</p>
+      </div>
+    
+      
+
+
+
+      <div id="userNameSub" >
+          <p id="usernameDisplay">{this.props.obj.username}</p>
+      </div>
+        </div>
+
+        <div id="contentBox"><p id="content">{this.props.obj.content}</p></div>
+        
       </div>
       );
   }
@@ -242,11 +244,18 @@ class MessageDisplayBox extends Component{
       const msgBuffer = this.props.msgBuffer[0]; 
       //TODO if a chat belongs to a same person, all chats go to single chatSectionContainer, ie picture, name, but then ontent on a per row basis
 
-
-
-
       return (
-      <ul id="messages">{msgBuffer instanceof Object ? msgBuffer.map( d => <li key={d._id}><ChatRow obj={d} /></li> ) : ""}</ul>
+      <ul id="messages">
+      {
+        msgBuffer instanceof Object ? msgBuffer.map( d =>
+        <li id="lichat" key={d._id}> 
+          <ChatRow obj={d} /> 
+        
+        </li>) : ""
+      }
+
+
+      </ul>
              );
     }
  } 
@@ -260,8 +269,6 @@ class MessageBox extends Component{
       };
     this.loadMessages = this.loadMessages.bind(this);
   };
-
-
 
 
   loadMessages = async () => {
@@ -295,15 +302,13 @@ class MessageBox extends Component{
     console.log("messages successfully retrieved");
   };
 
-
-
-
   render(){
     return (
+    <div className="MessageBox" >
     <div className={this.props.divname} >
       <MessageDisplayBox msgBuffer = {this.state.msgBuffer} />
 
-      <TextEntry />
+      <TextEntry className="MessageTextInput"/>
 
       <input type = "button"
        onClick    = {this.loadMessages} 
@@ -311,6 +316,7 @@ class MessageBox extends Component{
        />
 
 
+    </div>
     </div>
     );
   }

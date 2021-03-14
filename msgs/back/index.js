@@ -1,8 +1,8 @@
 const app = require("express")();
+const http = require("http")
+const httpServer = http.Server(app);
 
-const http = require("http").Server(app);
-
-const io = require("socket.io")(http, {
+const io = require("socket.io")(httpServer, {
                                       cors: {
                                         origin : "http://localhost:5071",
                                         credentials : true
@@ -15,6 +15,7 @@ const helmet = require("helmet");
 const conn         = require("./conn.js");
 const MessageModel = require("./message.js");
 
+const properties = require("./package");
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/page.html");
@@ -147,16 +148,41 @@ io.on("connection", (socket) => {
   });
 });
 
-http.listen(5070, () => {
-              console.log("listening at 5070");});
+async function announceSpinup(){
+    
+const data = JSON.stringify({
+    name: "Messages",
+    manifest:
+      {actions:"Null"
+    },
+    name: "Messages",
+    port: 5071
+  })
+
+const options = {
+  headers: {
+    "Content-Type": "application/json"
+    },
+  method: "POST",
+  hostname: "localhost", 
+  port: 5020,
+  path: "/api/register"
+}
+  
+  const req = http.request(options, res => {
+    console.log("response from orchestrator : " + res.statusCode)
+  })
+  
+
+  req.write(data)
+  req.end()
+}
 
 
 
+httpServer.listen(5070, () => {console.log("listening at 5070")})
 
 
-
-http.on("disconnect", () => {
-  console.log("user disconnected");
-});
-
-
+setTimeout(announceSpinup, 3000);
+app.listen(properties.listen);
+console.log("listening on " + properties.listen);

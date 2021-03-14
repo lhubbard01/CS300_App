@@ -1,4 +1,60 @@
-.App {
+.ChatRow {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  position: relative;
+  border: 1px solid black;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+
+#userCol{
+  background: tomato;
+  
+
+  display: grid;
+
+
+
+
+
+  grid-template-rows: 20% 80%;
+
+
+
+
+}
+
+
+
+
+#contentBox{
+ display: table-cell;
+}
+
+#lichat { 
+  list-style-type: none
+}
+.MessageBox {
+  padding-bottom: 3rem;
+  font-family: Roboto, Helvetica, Arial, sans-serif; 
+  position: relative;
+}
+
+
+.MessageTextInput {
+  background: rgba(0, 0, 0, 0.15);
+  padding : 0.25rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  height: 3rem;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+}
+
+/*.App {
   text-align: center;
 }
 
@@ -35,4 +91,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+}*/

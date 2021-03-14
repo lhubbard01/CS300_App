@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node indejs",
+    "start": "node index.js",
     "dev": "concurrently \"PORT=5071 npm run start --prefix ../front/\" \"nodemon index.js\"",
+    "nm": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
