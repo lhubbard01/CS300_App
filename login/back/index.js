@@ -1,39 +1,43 @@
 const express    = require("express");
+const helmet     = require("helmet");
 const http       = require("http");
-
+const bodyParser = require("body-parser");
 const properties = require("./package.json");
 const manifest   = properties.manifest;
-
-const LoginModel = require("./login.js");
-
+const {createProxyMiddleware} = require("http-proxy-middleware");
+const LoginModel = require("./login");
+const conn = require("./conn")
 const app = express();
-app.use(SignupRouter);
-
 //networking definitions and startup
 const port = process.env.PORT || 5040;
 
 
+app.use(helmet())
 async function announceSpinup(){
-  const data = {
+  const data = JSON.stringify({
     name     : manifest.name,
     manifest : manifest
   });
 
+  console.log(data);
+
+
+  console.log(data.length);
   const options = {
     hostname : "localhost",
     port     : 5020,
     path     : "/api/register",
-    methoe   : "POST",
+    method   : "POST",
     headers  : { 
       'Content-Type' : 'application/json',
       'Content-Length': data.length
     },
-    //agent: new Agent({ rejectUnauthorized: false })
   };
 
   console.log("initiating request send off");
 
-  const req = https.request(options, res => {
+  const req = http.request(options, res => {
+    
     console.log(`status code : ${res.statusCode}`)
     
     res.on("data", d => {
@@ -47,34 +51,60 @@ async function announceSpinup(){
 
   console.log("request created");
   
-  req.write(data);
+  req.write(data).catch(err => console.error(error))
   req.end();
 }
 
 
 
-app.post("/api/signup", (req, res) => {
-  
-  //only after being validated and sanitized
+
+
+app.post("/api/login", (req, res) => {
   const loginOpts        = req.body; 
   const loginCredentials = new LoginModel(loginOpts);
-  
-  console.log(JSON.stringify(
-    loginCredentials
-    )
-  );
+  res.status(200).send();
+});
+app.get("/api/login", (req, res) => {
+  res.status(200).send();
+})
 
-  loginCredentials.save();
-  
-  console.log(JSON.stringify(req.body));
-  console.log(JSON.stringify(req));
-  
-  res.status(200);
-
+app.post("/api/signup", bodyParser.json(),(req, res) => {
+  LoginModel.find({username: req.body.username}, (err, result) => {
+    if (result.length > 0){
+      console.log("DUPLICATE!! " , result);
+      res.status(500).json({
+          msg: "username already exists"
+        });
+      
+      return res;
+    } else {
+      console.log("UNIQUE UN, EMAIL, PUSHING")
+      const lm = LoginModel(req.body);
+      lm.save()
+        .then(ob => console.log("MONGO PUSH  ", ob))
+        .then(res.status(200)
+                  .json({msg: "added"})
+              )
+        .catch(err => {
+           console.error(err);
+           }
+        );
+      }
+  })
 });
 
 
-announceSpinup();
+
+  //const o = lm.save().then(o => console.log(o));
+
+  //only after being validated and sanitized
+  //res.status(200).json(o);
+
+
+
+  
+
+ announceSpinup();
 
 
 app.listen(port);
