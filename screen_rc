@@ -1,0 +1,64 @@
+escape xy
+
+hardstatus alwayslastline
+hardstatus string '%{= kG}[%{G}%H%? %1`%?%{g}][%= %{= kw}%-w%{+b yk} %n*%t%?(%u)%? %{-}%+w %=%{g}][%{B}%m/%d %{W}%C%A%{g}]'
+
+screen -t login/back  0  bash
+screen -t login/front 1 bash 
+screen -t orchestrator/back  2  bash
+screen -t orchestrator/front 3 bash
+screen -t ping/back  6  bash
+screen -t msgs/back  4  bash
+screen -t msgs/front  5  bash
+
+screen -t test/back    bash
+screen -t MAIN 8 zsh
+select 2
+split
+select 1
+focus up
+split -v
+focus down
+split -v 
+focus right
+select 4
+focus up
+focus next
+select 5
+split -v
+focus next
+select 8;
+focus down
+
+bind -c rsz 	    eval "focus"       "command -c rsz" # Tab
+bind -c rsz -k kl eval "focus left"  "command -c rsz" # Left
+bind -c rsz -k kr eval "focus right" "command -c rsz" # Right
+bind -c rsz -k ku eval "focus up"    "command -c rsz" # Up
+bind -c rsz -k kd eval "focus down"  "command -c rsz" # Down
+select 0
+stuff "cd /u/lhubbard/cs300/app2/login/back^M"
+stuff "npm run start^M"
+focus next
+select 1
+stuff "cd /u/lhubbard/cs300/app2/login/front^M"
+stuff "npm run start^M"
+select 2
+stuff "cd /u/lhubbard/cs300/app2/orchestrator/back^M"
+stuff "npm run start^M"
+focus next
+select 3
+stuff "cd /u/lhubbard/cs300/app2/orchestrator/back^M"
+stuff "npm run start^M"
+select 4
+stuff "cd /u/lhubbard/cs300/app2/msgs/back^M"
+stuff "npm run start^M"
+focus next
+select 5
+stuff "cd /u/lhubbard/cs300/app2/msgs/front^M"
+stuff "npm run start^M"
+focus next
+stuff "cd /u/lhubbard/cs300/app2/ping/back^M"
+stuff "npm run start^M"
+focus next
+stuff "cd /u/lhubbard/cs300/app2/^M"
+stuff "zsh^M"
