@@ -1,6 +1,6 @@
 const {React, Component} = require("react");
 const  ReactDOM =  require("react-dom");
-const {Route, Redirect} = require("react-router-dom");
+
 const bcrypt = require("bcryptjs");
 
 class Header extends Component{
@@ -185,6 +185,61 @@ class SignupBox extends Component{
   }
 };
 
+
+
+
+
+
+class RedirectPage extends Component{
+  componentDidMount(){
+    window.location.replace(this.props.url);
+  }
+  render(){
+    return( <div>outbound</div>);
+  }
+}
+
+class LoginRedirectBoxButton extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      name: "",
+      light : false,
+      clicked : false
+    }
+
+    this.onHover = this.onHover.bind(this);
+    this.onClick = this.onClick.bind(this);
+  }
+
+
+  onHover(e){
+    this.setState({name: this.state.name+"-active"})
+    this.setState({light: !this.state.light})
+  }
+
+
+  onClick(e){
+    this.setState({clicked: true})
+  }
+
+  render(){
+        if (this.state.clicked){
+         return <RedirectPage url={"http://localhost:5035"} /> 
+        }
+        else{
+          return (
+                 <div className={"LoginRedirectBoxButton" + this.state.name } 
+                      onClick={this.onClick} 
+                      onHover={this.onHover} 
+                      style={{background: "blue"}}>
+                    <p>Home</p>
+                </div> 
+          );
+      }
+  }
+}
+
 class App extends Component{
   constructor(props){
     super(props);
@@ -195,6 +250,7 @@ class App extends Component{
 
     return (
       <div className  ="LoginPage"  >
+        <LoginRedirectBoxButton />
         <input type="button" />
         <Header title ="Login" />
         <SignupBox />
