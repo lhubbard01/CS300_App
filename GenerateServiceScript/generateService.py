@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import subprocess
 """def generateRequestedClientApi(list):"""
 """def writeInitFrontend()"""
 def writePackage(opts):
@@ -34,7 +35,7 @@ def parseApiFile(api_file: str) -> dict:
   routes = is_routes = False
 
 
-  API = {"endpoints": {}}
+  API = {"endpoints": {}, "cra" : False}
 
   with open(api_file, "r") as f:
     candidate_endpoint = []
@@ -45,6 +46,8 @@ def parseApiFile(api_file: str) -> dict:
     for line in f.readlines():
       if "FRONT" in line:
         front = is_front = True
+        if "cra" in line: API["cra"] = True
+
       elif "BACK" in line:
         is_front = False
         back = is_back = True
@@ -93,7 +96,8 @@ def genProjectSkeleton(opts):
       writePackage(prefix + "back")
 
   if not os.path.isdir(prefix + "front"):
-    os.mkdir(prefix + "front")
+    if not api["cra"]: os.mkdir(prefix + "front")
+    else: subprocess.run("npx create-react-app front", shell = True)
     if opts["generate_package"]:
       writePackage(prefix + "back")
 
@@ -331,6 +335,8 @@ def main():
   parser.add_argument("--url", type = str, help="settable url, default is localhost", default = "localhost")
   parser.add_argument("--generate_package", action = "store_true", help="generate package.json")
   opts = vars(parser.parse_args())
+  
+  print(opts)
   if opts["prefix"]:
     opts["api_file"] = opts["prefix"] + opts["api_file"]
   opts["API"] = parseApiFile(opts["api_file"])

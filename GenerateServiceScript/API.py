@@ -12,15 +12,10 @@ class """ + opts["serviceName"] + """Client {
     """)
   for actionDecl in apifn:
     f.write(actionDecl)
-
-
   f.write("""
   };
 
-
   """)
-
-
 
   actions = opts["actions"]
   for action in actions.keys():
