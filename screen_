@@ -1,7 +1,0 @@
-#!/bin/bash
-#pkill screen
-screen "npm run start --prefix /u/lhubbard/cs300/app2/orchestrator/back" #& konsole -e $SHELL -c "npm run start --prefix /u/lhubbard/cs300/app2/orchestrator/front"
-screen  M1 bash & screen -AmdS M2 bash &
-screen -S M1 -p 0 -X stuff $'echo "HERE M1";\r\ntop\r'
-screen -ASx M2 -p 0 -X stuff "echo 'running...'"
-screen -S M2 -X screen ping example.com
